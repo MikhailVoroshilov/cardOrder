@@ -39,13 +39,11 @@ public class ApplicationCard {
 
 
     @Test
-    public void shouldTest(){
+    public void shouldTestCorrect(){
         driver.get("http://localhost:9999/");
-//        List <WebElement> textFields = driver.findElements(By.className("input__control"));
-//        textFields.get(0).sendKeys("Анна");
-//        textFields.get(1).sendKeys("+79305698778");
-        driver.findElement(By.cssSelector("[data-test-id='name'] input")).sendKeys("Анна");
-        driver.findElement(By.cssSelector("[type='tel']")).sendKeys("+79305698778");
+        List <WebElement> textFields = driver.findElements(By.className("input__control"));
+        textFields.get(0).sendKeys("Анна");
+        textFields.get(1).sendKeys("+79305698778");
         driver.findElement(By.className("checkbox__box")).click();
         driver.findElement(By.tagName("button")).click();
 
@@ -55,4 +53,76 @@ public class ApplicationCard {
         assertEquals(expected, actualText);
     }
 
+    @Test
+    public void shouldTestIncorrectEnterName(){
+        driver.get("http://localhost:9999/");
+        driver.findElement(By.cssSelector("[data-test-id='name'] input")).sendKeys("Maik");
+        driver.findElement(By.cssSelector("[type='tel']")).sendKeys("+79305698778");
+        driver.findElement(By.className("checkbox__box")).click();
+        driver.findElement(By.tagName("button")).click();
+
+        String actualText = driver.findElement(By.className("input__sub")).getText().trim(); //trim- обрезка пустых символов(пробелов) по обе стороны текста
+        String expected = "Имя и Фамилия указаные неверно. Допустимы только русские буквы, пробелы и дефисы.";
+
+        assertEquals(expected, actualText);
+    }
+
+    @Test
+    public void shouldTestIncorrectEnterNameDefis(){
+        driver.get("http://localhost:9999/");
+        driver.findElement(By.cssSelector("[data-test-id='name'] input")).sendKeys("Аннф_Петровна");
+        driver.findElement(By.cssSelector("[type='tel']")).sendKeys("+79305698778");
+        driver.findElement(By.className("checkbox__box")).click();
+        driver.findElement(By.tagName("button")).click();
+
+        String actualText = driver.findElement(By.className("input__sub")).getText().trim(); //trim- обрезка пустых символов(пробелов) по обе стороны текста
+        String expected = "Имя и Фамилия указаные неверно. Допустимы только русские буквы, пробелы и дефисы.";
+
+        assertEquals(expected, actualText);
+    }
+
+    @Test
+    public void shouldTestIncorrectEnterTelephone(){
+        driver.get("http://localhost:9999/");
+        driver.findElement(By.cssSelector("[data-test-id='name'] input")).sendKeys("Маша");
+        driver.findElement(By.cssSelector("[type='tel']")).sendKeys("+793056987784");
+        driver.findElement(By.className("checkbox__box")).click();
+        driver.findElement(By.tagName("button")).click();
+
+        List <WebElement> textErrors = driver.findElements(By.className("input__sub"));
+        String actualText = textErrors.get(1).getText().trim(); //trim- обрезка пустых символов(пробелов) по обе стороны текста
+        String expected = "Телефон указан неверно. Должно быть 11 цифр, например, +79012345678.";
+
+        assertEquals(expected, actualText);
+    }
+
+    @Test
+    public void shouldCreateNullName(){
+        driver.get("http://localhost:9999/");
+        driver.findElement(By.cssSelector("[data-test-id='name'] input")).sendKeys("");
+        driver.findElement(By.cssSelector("[type='tel']")).sendKeys("+793056987784");
+        driver.findElement(By.className("checkbox__box")).click();
+        driver.findElement(By.tagName("button")).click();
+
+        List <WebElement> textErrors = driver.findElements(By.className("input__sub"));
+        String actualText = textErrors.get(0).getText().trim(); //trim- обрезка пустых символов(пробелов) по обе стороны текста
+        String expected = "Поле обязательно для заполнения";
+
+        assertEquals(expected, actualText);
+    }
+
+    @Test
+    public void shouldCreateNullTelephone(){
+        driver.get("http://localhost:9999/");
+        driver.findElement(By.cssSelector("[data-test-id='name'] input")).sendKeys("Анна");
+        driver.findElement(By.cssSelector("[type='tel']")).sendKeys("");
+        driver.findElement(By.className("checkbox__box")).click();
+        driver.findElement(By.tagName("button")).click();
+
+        List <WebElement> textErrors = driver.findElements(By.className("input__sub"));
+        String actualText = textErrors.get(1).getText().trim(); //trim- обрезка пустых символов(пробелов) по обе стороны текста
+        String expected = "Поле обязательно для заполнения";
+
+        assertEquals(expected, actualText);
+    }
 }
